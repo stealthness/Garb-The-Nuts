@@ -7,6 +7,7 @@ public class NutScript : MonoBehaviour
     private readonly float MIN_SPAWN_TIME = 1f;
     private readonly float MAX_SPWN_TIME = 3f;
 
+
     private void Start()
     {
         Debug.Log("NUTTY TIME");

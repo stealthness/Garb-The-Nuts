@@ -1,12 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-
+    public Rigidbody2D rb;
     public GameObject pouch;
     private bool hasEaten = false;
+    public PlayerDirection playerDirection = PlayerDirection.Down;
+    private Vector2 prePos = Vector3.zero;
+
 
     public void Update()
     {
@@ -26,6 +30,8 @@ public class PlayerManager : MonoBehaviour
             
             hasEaten = false;
         }
+
+        Debug.Log(playerDirection.ToString());
     }
 
 
@@ -52,4 +58,26 @@ public class PlayerManager : MonoBehaviour
     {
         Debug.Log(collision.gameObject.name);    
     }
+
+    internal void SetDirection(Vector2 deltaMovement)
+    {
+        if (deltaMovement.x > 0 && Mathf.Abs(deltaMovement.x) > Mathf.Abs(deltaMovement.y))
+        {
+            playerDirection = PlayerDirection.Right;
+        }
+        else if (deltaMovement.x < 0 && Mathf.Abs(deltaMovement.x) > Mathf.Abs(deltaMovement.y))
+        {
+            playerDirection = PlayerDirection.Left;
+        }
+        else if (deltaMovement.y > 0 && Mathf.Abs(deltaMovement.y) > Mathf.Abs(deltaMovement.x))
+        {
+            playerDirection = PlayerDirection.Up;
+        }
+        else 
+        {
+            playerDirection = PlayerDirection.Down;
+        }
+    }
 }
+
+public enum PlayerDirection { Left, Right, Up, Down } 

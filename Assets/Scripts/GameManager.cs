@@ -55,13 +55,12 @@ public class GameManager : MonoBehaviour
         gameState = GameState.Ended;
         movementSpeed = startMovementSpeed;
         gameTime = startGameTime;
-        timeText.text = string.Format("Time : {0} ", (int)gameTime);
-        scoreText.text = string.Format("Score : {0}", score);
+        UpdateScoreAndTimeText(gameTime,score);
     }
 
     private void GenerateNut()
     {
-        nuts.Add(Instantiate(prefabNut, GetNewPos() , Quaternion.Euler(0,0 , Random.Range(0, 4) * 90f)));
+        nuts.Add(Instantiate(prefabNut, GetNewPos() , Quaternion.Euler(0,0 , Random.Range(0, 12) * 60f)));
     }
 
     private Vector3 GetNewPos()
@@ -87,49 +86,66 @@ public class GameManager : MonoBehaviour
         return newPos;
     }
 
+    private void UpDateNuts()
+    {
+        for (int i = 0; i < nuts.Count; i++)
+        {
+            if (!nuts[i].activeSelf)
+            {
+                nuts[i].SetActive(true);
+                nuts[i].transform.position = GetNewPos();
+                score += 10;
+                movementSpeed = MovementSpeedAdjustment();
+                player.GetComponent<PlayerManager>().IncreasePouch();
+            }
+        }
+    }
+
+
     // Update is called once per frame
     void Update()
     {
 
         if (gameState == GameState.Started)
         {
-            float x = Input.GetAxis("Horizontal"); 
-            float y = Input.GetAxis("Vertical"); 
+            float x = Input.GetAxis("Horizontal");
+            float y = Input.GetAxis("Vertical");
             playerMovement = new Vector2(x, y);
 
             if (rb != null)
             {
                 Vector2 deltaMovement = playerMovement * movementSpeed * Time.deltaTime;
+                SetPlayDirection(deltaMovement);
                 rb.MovePosition(CheckMovement(rb.position + deltaMovement));
             }
 
+            UpDateNuts();
 
-            for (int i = 0; i < nuts.Count; i++)
+            if (gameTime < 30 && nuts.Count < maxNumberofPrefabs + 30 % gameTime)
             {
-                Debug.Log(nuts.Count);
-                if (!nuts[i].activeSelf)
-                {
-                    nuts[i].SetActive(true);
-                    nuts[i].transform.position = GetNewPos();
-                    score += 10;
-                    movementSpeed = MovementSpeedAdjustment();
-                    player.GetComponent<PlayerManager>().IncreasePouch();
-
-
-                }
+                GenerateNut();
             }
 
             gameTime -= Time.deltaTime;
-            if (gameTime < 0 )
+            if (gameTime < 0)
             {
                 EndGame();
                 gameState = GameState.Ended;
-            }        
-            timeText.text = string.Format("Time : {0} ", (int)gameTime);
-            scoreText.text = string.Format("Score : {0}", score);
+            }
+            UpdateScoreAndTimeText(gameTime, score);
         }
     }
 
+    private void SetPlayDirection(Vector2 deltaMovement)
+    {
+        player.GetComponent<PlayerManager>().SetDirection(deltaMovement);
+    }
+
+    private void UpdateScoreAndTimeText(float time, int score)
+    {
+        timeText.text = string.Format("Time : {0} ", (int)time);
+        scoreText.text = string.Format("Score : {0}", score);
+    }
 
     public float MovementSpeedAdjustment()
     {
@@ -149,8 +165,7 @@ public class GameManager : MonoBehaviour
             return 2f; ;
 
         return movementSpeed -= 0.1f;
-        
-         
+               
     }
 
     public void EndGame()
