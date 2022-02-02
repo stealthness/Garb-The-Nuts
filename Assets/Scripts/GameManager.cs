@@ -61,8 +61,19 @@ public class GameManager : MonoBehaviour
 
     private void GenerateNut()
     {
-        Vector2 randomPos = new Vector2(Random.Range(MIN_X + 1, MAX_X - 1), Random.Range(MIN_Y + 1, MAX_Y - 1));
-        nuts.Add(Instantiate(prefabNut, randomPos, Quaternion.identity));
+        Vector3 newPos = new Vector3(Random.Range(MIN_X + 1, MAX_X - 1), Random.Range(MIN_Y + 1, MAX_Y - 1), 0);
+        if (Vector3.SqrMagnitude(newPos - player.transform.position) < 1f)
+        {
+            return;
+        }
+        foreach(GameObject nut in nuts)
+        {
+            if (Vector3.SqrMagnitude(newPos - nut.transform.position) < 0.5f)
+            {
+                return;
+            }
+        }
+        nuts.Add(Instantiate(prefabNut, newPos, Quaternion.identity));
     }
 
     // Update is called once per frame
