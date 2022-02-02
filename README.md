@@ -13,7 +13,7 @@ I am new to game development and still learning the Unity Engine. For this proje
 
 Hours: The game's core concept took 3 hours to develop, but attempts to add sound and polishing added far too many hours to the project.
 
-[!]<img src="GrabTheNutGameplay(large).gif" height="100" alt="Hamster pouch being filled"/>
+<img src="pouch.gif" height="100" alt="Hamster pouch being filled"/>
 
 Hamster pouch being filled
 Development Team: Just myself, all the code, design, and sounds were produced by me.
