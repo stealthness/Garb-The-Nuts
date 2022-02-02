@@ -61,19 +61,30 @@ public class GameManager : MonoBehaviour
 
     private void GenerateNut()
     {
+        nuts.Add(Instantiate(prefabNut, GetNewPos() , Quaternion.Euler(0,0 , Random.Range(0, 4) * 90f)));
+    }
+
+    private Vector3 GetNewPos()
+    {
         Vector3 newPos = new Vector3(Random.Range(MIN_X + 1, MAX_X - 1), Random.Range(MIN_Y + 1, MAX_Y - 1), 0);
-        if (Vector3.SqrMagnitude(newPos - player.transform.position) < 1f)
+        bool found = false;
+        while (found)
         {
-            return;
-        }
-        foreach(GameObject nut in nuts)
-        {
-            if (Vector3.SqrMagnitude(newPos - nut.transform.position) < 0.5f)
+            if (Vector3.SqrMagnitude(newPos - player.transform.position) < 1f)
             {
-                return;
+                continue;
             }
+            foreach (GameObject nut in nuts)
+            {
+                if (Vector3.SqrMagnitude(newPos - nut.transform.position) < 0.5f)
+                {
+                    continue;
+                }
+            }
+            found = true;
         }
-        nuts.Add(Instantiate(prefabNut, newPos, Quaternion.identity));
+
+        return newPos;
     }
 
     // Update is called once per frame
@@ -95,13 +106,16 @@ public class GameManager : MonoBehaviour
 
             for (int i = 0; i < nuts.Count; i++)
             {
-                if (nuts[i] == null)
+                Debug.Log(nuts.Count);
+                if (!nuts[i].activeSelf)
                 {
-                    nuts.RemoveAt(i);
+                    nuts[i].SetActive(true);
+                    nuts[i].transform.position = GetNewPos();
                     score += 10;
                     movementSpeed = MovementSpeedAdjustment();
                     player.GetComponent<PlayerManager>().IncreasePouch();
-                    GenerateNut();
+
+
                 }
             }
 
