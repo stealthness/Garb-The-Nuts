@@ -10,7 +10,10 @@ public class PlayerManager : MonoBehaviour
     private bool hasEaten = false;
     public PlayerDirection playerDirection = PlayerDirection.Down;
     private Vector2 prePos = Vector3.zero;
+    public GameObject player;
 
+    private Animation animation;
+    private float nextWink = 1f;
 
     public void Update()
     {
@@ -31,7 +34,20 @@ public class PlayerManager : MonoBehaviour
             hasEaten = false;
         }
 
-        Debug.Log(playerDirection.ToString());
+        if (nextWink < 0f)
+        {
+            
+            animation = gameObject.GetComponent<Animation>();
+            if (animation != null)
+            {
+            animation.Play();
+            }
+
+            nextWink = UnityEngine.Random.Range(2f, 10f);
+        }
+        nextWink -= Time.deltaTime;
+
+
     }
 
 
