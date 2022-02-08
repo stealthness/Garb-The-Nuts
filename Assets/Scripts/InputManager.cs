@@ -5,34 +5,36 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private  GameObject player;
+    public Rigidbody2D rb;
+    public  GameObject player;
+    public GameManager gameManager;
+    public PlayerManager playerManager;
 
     private GameState gameState;
     private PlayerDirection playerDirection;
     private float movementSpeed;
     private int score;
-    private GameManager gameManager;
     private float adjustment;
     private readonly float MIN_X = -5.75f;
     private readonly float MAX_X = 5.75f;
     private readonly float MIN_Y = -4.2f;
     private readonly float MAX_Y = 4.2f;
 
-    public InputManager(Rigidbody2D rb, GameObject player)
-    {
-        this.rb = rb;
-        this.player = player;
-    }
+    private Vector3 centerOfBounds;
+    private Vector3 cournBounds;
+
+    private Bounds gameBounds;
+
 
     private void Awake()
     {
 
-        gameManager = GetComponent<GameManager>();
-        gameState = gameManager.gameState;
-        playerDirection = gameObject.GetComponent<PlayerManager>().playerDirection;
-        score = gameManager.score;
+        //gameManager = GetComponent<GameManager>();
+        //playerDirection = gameObject.GetComponent<PlayerManager>().playerDirection;
+
     }
+
+    
 
     internal Vector3 GetUpdateMovement()
     {
@@ -56,7 +58,13 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
+        playerDirection = playerManager.playerDirection;
+        gameState = gameManager.gameState;
+        score = gameManager.score;
+        centerOfBounds = Vector3.zero;
+        cournBounds = new Vector3(MAX_X * 2f, MAX_Y * 2f, 0f);
+        gameBounds = new Bounds(centerOfBounds, cournBounds);
     }
 
     // Update is called once per frame
@@ -128,22 +136,13 @@ public class InputManager : MonoBehaviour
 
     private Vector2 CheckMovement(Vector2 movement)
     {
-        if (movement.x < MIN_X)
+        if (gameBounds.Contains(movement))
         {
-            movement.x = MIN_X;
+            return movement;
         }
-        if (movement.x > MAX_X)
+        else
         {
-            movement.x = MAX_X;
+            return gameBounds.ClosestPoint(movement);
         }
-        if (rb.position.y < MIN_Y)
-        {
-            movement.y = MIN_Y;
-        }
-        if (rb.position.y > MAX_Y)
-        {
-            movement.y = MAX_Y;
-        }
-        return movement;
     }
 }

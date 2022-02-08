@@ -19,11 +19,10 @@ public class PlayerManager : MonoBehaviour
     private float _stunnedTime;
     private readonly string _mushroomName = "Mushroom";
 
-    private InputManager _inputManager;
+    public InputManager inputManager;
 
     private void Awake()
     {
-        _inputManager = new InputManager(rb, player);
     }
 
 
@@ -41,7 +40,7 @@ public class PlayerManager : MonoBehaviour
             hasEaten = false;
         }
 
-        Vector3 newPos = _inputManager.GetUpdateMovement();
+        //Vector3 newPos = inputManager.GetUpdateMovement();
 
         //if (nextWink < 0f)
         //{
@@ -120,7 +119,7 @@ public class PlayerManager : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log(collision.name, this);
-        if (collision.name.StartsWith(_mushroomName)) ;
+        if (collision.name.StartsWith(_mushroomName))
         {
             StunPlayer();
         }

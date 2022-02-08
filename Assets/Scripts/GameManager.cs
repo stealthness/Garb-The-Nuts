@@ -7,13 +7,6 @@ public class GameManager : MonoBehaviour
 
     private bool testMode = false;
 
-    public TextMeshProUGUI timeText;
-    public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI highScorePanelText;
-    public GameObject highScorePanel;
-    public GameObject instructionPanel;
-    public GameObject menuPanel;
-
     public Rigidbody2D rb;
     private readonly float startMovementSpeed = 20f;
     private float startGameTime = 60;
@@ -26,8 +19,8 @@ public class GameManager : MonoBehaviour
     private readonly float MIN_Y = -4.2f;
     private readonly float MAX_Y = 4.2f;
 
-    Vector3 centerOfBounds;
-    Vector3 cournBounds;
+    private Vector3 centerOfBounds;
+    private Vector3 cournBounds;
 
     private Bounds gameBounds;
 
@@ -42,6 +35,14 @@ public class GameManager : MonoBehaviour
     public int score { get; set; }
     public GameObject player;
     public GameState gameState;
+
+    public UIManager uiManager;
+
+    private void Awake()
+    {
+        
+    }
+
 
     void Start()
     {
@@ -69,7 +70,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.Ended;
         movementSpeed = startMovementSpeed;
         gameTime = startGameTime;
-        UpdateScoreAndTimeText(gameTime,score);
+        uiManager.UpdateScoreAndTimeText(gameTime, score);
     }
 
     private void GenerateNut()
@@ -146,7 +147,8 @@ public class GameManager : MonoBehaviour
                 EndGame();
                 gameState = GameState.Ended;
             }
-            UpdateScoreAndTimeText(gameTime, score);
+            uiManager.UpdateScoreAndTimeText(gameTime, score);
+            // UpdateScoreAndTimeText(gameTime, score);
         }
     }
 
@@ -155,11 +157,6 @@ public class GameManager : MonoBehaviour
         player.GetComponent<PlayerManager>().SetDirection(deltaMovement);
     }
 
-    private void UpdateScoreAndTimeText(float time, int score)
-    {
-        timeText.text = string.Format("Time : {0} ", (int)time);
-        scoreText.text = string.Format("Score : {0}", score);
-    }
 
     public float MovementSpeedAdjustment()
     {
@@ -186,16 +183,18 @@ public class GameManager : MonoBehaviour
     {  
         Time.timeScale = 0f;
         int highScore = PlayerPrefs.GetInt("HighScore");
-        menuPanel.SetActive(true);
+        uiManager.ActivatePanel(Panels.Menu);
+        //menuPanel.SetActive(true);
         if ( highScore < score)
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
-            highScorePanelText.text = "Your new Highscore is " + highScore;
+            uiManager.SetText(Panels.HighScore, "Your new Highscore is " + highScore);
         }
         else
         {
-            highScorePanelText.text = "Your Highscore remains at " + highScore;
+
+            uiManager.SetText(Panels.HighScore, "Your Highscore remains at " + highScore);
         }
     }
 
@@ -207,9 +206,7 @@ public class GameManager : MonoBehaviour
         score = 0;
         movementSpeed = startMovementSpeed;
         Time.timeScale = 1f;
-        instructionPanel.SetActive(false);
-        highScorePanel.SetActive(true);
-        menuPanel.SetActive(false);
+        uiManager.ActivatePanel(Panels.HighScore);
         gameState = GameState.Started;
     }
 
@@ -224,24 +221,6 @@ public class GameManager : MonoBehaviour
         {
             return gameBounds.ClosestPoint(movement);
         }
-        //Debug.Log("Hit Wall");
-        //if (movement.x < MIN_X )
-        //{
-        //    movement.x = MIN_X;
-        //}
-        //if (movement.x > MAX_X)
-        //{
-        //    movement.x = MAX_X;
-        //}
-        //if (rb.position.y  < MIN_Y )
-        //{
-        //    movement.y = MIN_Y;
-        //}
-        //if (rb.position.y  > MAX_Y )
-        //{
-        //    movement.y = MAX_Y;
-        //}
-        //return movement;
     }
 }
 
