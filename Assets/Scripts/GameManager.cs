@@ -5,19 +5,23 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    private bool testMode = false;
+    private bool testMode = true;
 
     public Rigidbody2D rb;
     private readonly float startMovementSpeed = 20f;
-    private float startGameTime = 60;
+    private float startGameTime;
     private float startAdjustment = 0.7f;
     private float movementSpeed;
     private Vector2 playerMovement;
 
-    private readonly float MIN_X = -5.75f;
+    //private readonly float MIN_X = -5.75f;
     private readonly float MAX_X = 5.75f;
-    private readonly float MIN_Y = -4.2f;
+    //private readonly float MIN_Y = -4.2f;
     private readonly float MAX_Y = 4.2f;
+
+    private readonly float standardGameTime = 60f;
+    private readonly float testGameTime = 5f;
+
 
     private Vector3 centerOfBounds;
     private Vector3 cournBounds;
@@ -46,27 +50,28 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
-        centerOfBounds = Vector3.zero;
-        cournBounds = new Vector3(MAX_X * 2f, MAX_Y * 2f, 0f);
-        gameBounds = new Bounds(centerOfBounds, cournBounds);
-
-        var n = 3;
-
-        n = n + 1;
-        adjustment = startAdjustment;
+        
         nuts = new List<GameObject>();
         for (int i = 0; i < maxNumberofPrefabs; i++)
         {
             GenerateNut();
         }
+
+        centerOfBounds = Vector3.zero;
+        cournBounds = new Vector3(MAX_X * 2f, MAX_Y * 2f, 0f);
+        gameBounds = new Bounds(centerOfBounds, cournBounds);
+
+        adjustment = startAdjustment;
+
         score = 0;
         Time.timeScale = 0f;
         if (testMode)
         {
             PlayerPrefs.SetInt("HighScore", 0);
-            startGameTime = 5f;
+            startGameTime = testGameTime;
         }
+
+        startGameTime = standardGameTime;
         gameState = GameState.Ended;
         movementSpeed = startMovementSpeed;
         gameTime = startGameTime;
@@ -80,7 +85,7 @@ public class GameManager : MonoBehaviour
 
     private Vector3 GetNewPos()
     {
-        Vector3 newPos = new Vector3(Random.Range(MIN_X + 1, MAX_X - 1), Random.Range(MIN_Y + 1, MAX_Y - 1), 0);
+        Vector3 newPos = new Vector3(Random.Range(gameBounds.min.x + 1, gameBounds.max.x + 1 - 1), Random.Range(gameBounds.min.y + 1, gameBounds.max.y - 1), 0);
         bool found = false;
         while (found)
         {
