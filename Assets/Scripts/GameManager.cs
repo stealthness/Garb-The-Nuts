@@ -20,11 +20,19 @@ public class GameManager : MonoBehaviour
     private float startAdjustment = 0.7f;
     private float movementSpeed;
     private Vector2 playerMovement;
-        
+
     private readonly float MIN_X = -5.75f;
     private readonly float MAX_X = 5.75f;
     private readonly float MIN_Y = -4.2f;
     private readonly float MAX_Y = 4.2f;
+
+    Vector3 centerOfBounds;
+    Vector3 cournBounds;
+
+    private Bounds gameBounds;
+
+
+
 
     public GameObject prefabNut;
     private List<GameObject> nuts;
@@ -32,15 +40,16 @@ public class GameManager : MonoBehaviour
     private float adjustment;
     private float gameTime;
     public int score { get; set; }
-
-    
-
     public GameObject player;
-
     public GameState gameState;
 
     void Start()
     {
+
+        centerOfBounds = Vector3.zero;
+        cournBounds = new Vector3(MAX_X * 2f, MAX_Y * 2f, 0f);
+        gameBounds = new Bounds(centerOfBounds, cournBounds);
+
         var n = 3;
 
         n = n + 1;
@@ -207,23 +216,32 @@ public class GameManager : MonoBehaviour
 
     private Vector2 CheckMovement(Vector2 movement)
     {
-        if (movement.x < MIN_X )
+        if (gameBounds.Contains(movement))
         {
-            movement.x = MIN_X;
+            return movement;
         }
-        if (movement.x > MAX_X)
+        else
         {
-            movement.x = MAX_X;
+            return gameBounds.ClosestPoint(movement);
         }
-        if (rb.position.y  < MIN_Y )
-        {
-            movement.y = MIN_Y;
-        }
-        if (rb.position.y  > MAX_Y )
-        {
-            movement.y = MAX_Y;
-        }
-        return movement;
+        //Debug.Log("Hit Wall");
+        //if (movement.x < MIN_X )
+        //{
+        //    movement.x = MIN_X;
+        //}
+        //if (movement.x > MAX_X)
+        //{
+        //    movement.x = MAX_X;
+        //}
+        //if (rb.position.y  < MIN_Y )
+        //{
+        //    movement.y = MIN_Y;
+        //}
+        //if (rb.position.y  > MAX_Y )
+        //{
+        //    movement.y = MAX_Y;
+        //}
+        //return movement;
     }
 }
 
