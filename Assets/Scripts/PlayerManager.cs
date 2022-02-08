@@ -12,11 +12,20 @@ public class PlayerManager : MonoBehaviour
     private Vector2 prePos = Vector3.zero;
     public GameObject player;
 
-    private Animation animation;
+    //private Animation animation;
     private float nextWink = 1f;
+    private PlayerState playerState;
+    private float stunnedTime;
+
+    public void Start()
+    {
+        playerState = PlayerState.Normal;
+    }
+
 
     public void Update()
     {
+        //Debug.Log("<1>");
         if (hasEaten)
         {
             if (pouch.gameObject.transform.localScale.x < 1f)
@@ -37,11 +46,11 @@ public class PlayerManager : MonoBehaviour
         if (nextWink < 0f)
         {
             
-            animation = gameObject.GetComponent<Animation>();
-            if (animation != null)
-            {
-            animation.Play();
-            }
+            //animation = gameObject.GetComponent<Animation>();
+            //if (animation != null)
+            //{
+            //animation.Play();
+            //}
 
             nextWink = UnityEngine.Random.Range(2f, 10f);
         }
@@ -50,7 +59,28 @@ public class PlayerManager : MonoBehaviour
 
     }
 
+    public void FixedUpdate()
+    {
+        if (playerState != PlayerState.Stunned)
+        {
+            return;
+        }
+        if (playerState == PlayerState.Stunned)
+        {
+            Debug.Log("Stunned");
+            stunnedTime -= Time.fixedTime;
+            if (stunnedTime < 0f)
+            {
+                stunnedTime = 2f;
+                playerState = PlayerState.Normal;
+            }
+        }
+    }
 
+    public void StunPlayer()
+    {
+        playerState = PlayerState.Stunned;
+    }
 
     public void IncreasePouch()
     {
@@ -96,4 +126,5 @@ public class PlayerManager : MonoBehaviour
     }
 }
 
-public enum PlayerDirection { Left, Right, Up, Down } 
+public enum PlayerDirection { Left, Right, Up, Down }
+public enum PlayerState { Normal, SpeedBoosted, Stunned }
