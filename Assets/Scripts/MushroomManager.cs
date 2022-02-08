@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class MushroomManager : MonoBehaviour
 {
-    public GameObject player;
+    private PlayerManager player;
+
+    private void Awake()
+    {
+        player = GetComponent<PlayerManager>();
+    }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +22,7 @@ public class MushroomManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         
     }
 
@@ -21,6 +30,6 @@ public class MushroomManager : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Mushroom hit");
-        player.GetComponent<PlayerManager>().StunPlayer();
+        player.StunPlayer();
     }
 }

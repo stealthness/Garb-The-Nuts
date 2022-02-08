@@ -14,13 +14,22 @@ public class PlayerManager : MonoBehaviour
     private bool hasEaten = false;
 
     //private Animation animation;
-    private float nextWink = 1f;
-    private PlayerState playerState;
-    private float stunnedTime;
+    private float _nextWink = 1f;
+    private PlayerState _playerState;
+    private float _stunnedTime;
+    private readonly string _mushroomName = "Mushroom";
+
+    private InputManager _inputManager;
+
+    private void Awake()
+    {
+        _inputManager = new InputManager(rb, player);
+    }
+
 
     public void Start()
     {
-        playerState = PlayerState.Normal;
+        _playerState = PlayerState.Normal;
     }
 
 
@@ -31,6 +40,8 @@ public class PlayerManager : MonoBehaviour
             IncreasePouchSize();
             hasEaten = false;
         }
+
+        Vector3 newPos = _inputManager.GetUpdateMovement();
 
         //if (nextWink < 0f)
         //{
@@ -68,30 +79,36 @@ public class PlayerManager : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if (playerState != PlayerState.Stunned)
+        if (_playerState != PlayerState.Stunned)
         {
             return;
         }
-        if (playerState == PlayerState.Stunned)
+        if (_playerState == PlayerState.Stunned)
         {
             Debug.Log("Stunned");
-            stunnedTime -= Time.fixedTime;
-            if (stunnedTime < 0f)
+            _stunnedTime -= Time.fixedTime;
+            if (_stunnedTime < 0f)
             {
-                stunnedTime = 2f;
-                playerState = PlayerState.Normal;
+                _stunnedTime = 2f;
+                _playerState = PlayerState.Normal;
             }
         }
     }
 
     public void StunPlayer()
     {
-        playerState = PlayerState.Stunned;
+        if (_playerState == PlayerState.Stunned) return;
+        if (rb == null)
+        {
+            Debug.Log("<StunPlayer", this);
+        }
+        rb.velocity = Vector3.zero;
+        _playerState = PlayerState.Stunned;
     }
 
     public void IncreasePouch()
     {
-        Debug.Log("Increase Pounch");        
+        Debug.Log("Increase Pounch", this);        
         hasEaten=true;
     }
 
@@ -102,7 +119,12 @@ public class PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.name);
+        Debug.Log(collision.name, this);
+        if (collision.name.StartsWith(_mushroomName)) ;
+        {
+            StunPlayer();
+        }
+
     }
 
     

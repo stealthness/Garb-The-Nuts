@@ -31,7 +31,9 @@ public class GameManager : MonoBehaviour
     private readonly int maxNumberofPrefabs = 7;
     private float adjustment;
     private float gameTime;
-    private int score;
+    public int score { get; set; }
+
+    
 
     public GameObject player;
 
@@ -39,6 +41,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        var n = 3;
+
+        n = n + 1;
         adjustment = startAdjustment;
         nuts = new List<GameObject>();
         for (int i = 0; i < maxNumberofPrefabs; i++)
