@@ -7,10 +7,11 @@ public class PlayerManager : MonoBehaviour
 {
     public Rigidbody2D rb;
     public GameObject pouch;
-    private bool hasEaten = false;
     public PlayerDirection playerDirection = PlayerDirection.Down;
     private Vector2 prePos = Vector3.zero;
     public GameObject player;
+
+    private bool hasEaten = false;
 
     //private Animation animation;
     private float nextWink = 1f;
@@ -25,38 +26,44 @@ public class PlayerManager : MonoBehaviour
 
     public void Update()
     {
-        //Debug.Log("<1>");
         if (hasEaten)
         {
-            if (pouch.gameObject.transform.localScale.x < 1f)
-            {
-                pouch.gameObject.transform.localScale += new Vector3(0.08f, 0.08f, 0f);
-            }else if (pouch.gameObject.transform.localScale.x < 2f)
-            {
-                pouch.gameObject.transform.localScale += new Vector3(0.04f, 0.04f, 0f);
-            }
-            else if (pouch.gameObject.transform.localScale.x < 3f)
-            {
-                pouch.gameObject.transform.localScale += new Vector3(0.02f, 0.02f, 0f);
-            }
-            
+            IncreasePouchSize();
             hasEaten = false;
         }
 
-        if (nextWink < 0f)
-        {
+        //if (nextWink < 0f)
+        //{
             
-            //animation = gameObject.GetComponent<Animation>();
-            //if (animation != null)
-            //{
-            //animation.Play();
-            //}
+        //    //animation = gameObject.GetComponent<Animation>();
+        //    //if (animation != null)
+        //    //{
+        //    //animation.Play();
+        //    //}
 
-            nextWink = UnityEngine.Random.Range(2f, 10f);
+        //    nextWink = UnityEngine.Random.Range(2f, 10f);
+        //}
+        // nextWink -= Time.deltaTime;
+
+
+    }
+
+    private void IncreasePouchSize()
+    {
+        float pouchAdjustment;
+        if (pouch.gameObject.transform.localScale.x < 1f)
+        {
+            pouchAdjustment = 0.08f;
         }
-        nextWink -= Time.deltaTime;
-
-
+        else if (pouch.gameObject.transform.localScale.x < 2f)
+        {
+            pouchAdjustment = 0.04f;
+        }
+        else
+        {
+            pouchAdjustment = 0.02f;
+        }
+        pouch.gameObject.transform.localScale += new Vector3(1f, 1f, 0f) * pouchAdjustment;
     }
 
     public void FixedUpdate()
