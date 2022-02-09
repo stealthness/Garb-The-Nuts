@@ -153,6 +153,7 @@ public class PlayerManager : MonoBehaviour
     public void ResetPlayerManager()
     {
         _playerMovementSpeed = _startingPlayerMovementSpeed;
+        player.transform.position = Vector3.zero;
         ResetPouch();
     }
 

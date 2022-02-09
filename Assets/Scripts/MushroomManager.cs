@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class MushroomManager : MonoBehaviour
 {
+    public GameManager gameManager;
+
     private PlayerManager player;
+    private List<GameObject> gameObjects = new List<GameObject>();
+    private float _nextMushroomSpawnInSecs;
 
     private void Awake()
     {
@@ -16,13 +20,16 @@ public class MushroomManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        _nextMushroomSpawnInSecs = 5f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameManager.GameCountdownTimeInSecs < 60 - _nextMushroomSpawnInSecs)
+        {
 
+        }
         
     }
 
@@ -31,6 +38,7 @@ public class MushroomManager : MonoBehaviour
     {
         Debug.Log("Mushroom hit");
         player.StunPlayer();
+        collision.gameObject.SetActive(false);
     }
 }
 

@@ -52,6 +52,16 @@ public class UIManager : MonoBehaviour
         }
 
     }
+
+    internal void SetHighScore(bool newHighScore,int highScore)
+    {
+        string messageText = "Your Highscore remains at " + highScore;
+        if (newHighScore)
+        {
+            messageText = "Your new Highscore is " + highScore;
+        }
+        SetText(Panels.HighScore, messageText);
+    }
 }
 
 public enum Panels

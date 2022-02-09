@@ -768,6 +768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464634f3467e3cc4f9db93b8e716ab81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 2022271717}
 --- !u!4 &602257876
 Transform:
   m_ObjectHideFlags: 0
@@ -2482,14 +2483,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f92097c03a348e4880ad8f138d28637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 2094141664}
-  gameBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 1905385699}
-  prefabNut: {fileID: 7862900428580068387, guid: 3a0f4c0ac24538449a3554f85091b479, type: 3}
   player: {fileID: 2094141661}
   currentGameState: 0
+  audioSource: {fileID: 1905385699}
   uiManager: {fileID: 105644832}
   nutManager: {fileID: 1210989466}
   playerManager: {fileID: 2094141663}
@@ -2646,6 +2642,7 @@ MonoBehaviour:
   playerDirection: 3
   player: {fileID: 488435160}
   pouch: {fileID: 1441979472}
+  gameManager: {fileID: 2022271717}
 --- !u!50 &2094141664
 Rigidbody2D:
   serializedVersion: 4

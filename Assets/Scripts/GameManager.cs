@@ -87,14 +87,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         uiManager.ActivatePanel(Panels.Menu);
         int highScore = PlayerPrefs.GetInt("HighScore");
-        string messageText = "Your Highscore remains at" + highScore;
-        if ( highScore < GameScore)
+        if (highScore < GameScore)
         {
-            highScore = GameScore;
-            PlayerPrefs.SetInt("HighScore", highScore);
-            messageText = "Your new Highscore is " + highScore;
+            PlayerPrefs.SetInt("HighScore", GameScore);
         }
-        uiManager.SetText(Panels.HighScore, messageText);
+        uiManager.SetHighScore(highScore < GameScore, GameScore);
+
     }
 
 
