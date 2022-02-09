@@ -319,3 +319,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2f51c057532c8340b288ad356d4f4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nutPrefab: {fileID: 7862900428580068387}
+  nutState: 0

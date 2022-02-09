@@ -15,25 +15,13 @@ public class InputManager : MonoBehaviour
     private float movementSpeed;
     private int score;
     private float adjustment;
-    private readonly float MIN_X = -5.75f;
     private readonly float MAX_X = 5.75f;
-    private readonly float MIN_Y = -4.2f;
     private readonly float MAX_Y = 4.2f;
 
     private Vector3 centerOfBounds;
     private Vector3 cournBounds;
 
     private Bounds gameBounds;
-
-
-    private void Awake()
-    {
-
-        //gameManager = GetComponent<GameManager>();
-        //playerDirection = gameObject.GetComponent<PlayerManager>().playerDirection;
-
-    }
-
     
 
     internal Vector3 GetUpdateMovement()
@@ -60,8 +48,8 @@ public class InputManager : MonoBehaviour
     {
 
         playerDirection = playerManager.playerDirection;
-        gameState = gameManager.gameState;
-        score = gameManager.score;
+        gameState = gameManager.currentGameState;
+        score = gameManager.GameScore;
         centerOfBounds = Vector3.zero;
         cournBounds = new Vector3(MAX_X * 2f, MAX_Y * 2f, 0f);
         gameBounds = new Bounds(centerOfBounds, cournBounds);

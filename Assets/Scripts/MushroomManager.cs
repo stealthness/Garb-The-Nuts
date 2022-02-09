@@ -33,3 +33,12 @@ public class MushroomManager : MonoBehaviour
         player.StunPlayer();
     }
 }
+
+class Mushroom : ScriptableObject
+{
+    Vector3 position;
+    float growthTime = 4f; 
+
+
+
+}

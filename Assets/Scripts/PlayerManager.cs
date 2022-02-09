@@ -10,8 +10,12 @@ public class PlayerManager : MonoBehaviour
     public PlayerDirection playerDirection;
     public GameObject player;
     public GameObject pouch;
-    
+    public GameManager gameManager;
 
+
+    private readonly float _startingPlayerMovementSpeed = 20f;
+    private float _playerMovementSpeed = 20f;
+    private float _playerSpeedAdjustment;
     private bool hasEaten = false;
 
     //private Animation animation;
@@ -20,12 +24,20 @@ public class PlayerManager : MonoBehaviour
     private PlayerState _playerState;
     private float _stunnedTime;
     private readonly string _mushroomName = "Mushroom";
+    private readonly string _nutName = "Nut";
+    private readonly float startingPlayerSpeedAdjustment= 0.7f;
 
+    public float Get_startingPlayerMovementSpeed()
+    {
+        return _startingPlayerMovementSpeed;
+    }
 
     public void Start()
     {
         playerDirection = PlayerDirection.Down;
         _playerState = PlayerState.Normal;
+        _playerMovementSpeed = _startingPlayerMovementSpeed;
+        _playerSpeedAdjustment = startingPlayerSpeedAdjustment;
     }
 
     public void Update()
@@ -56,11 +68,11 @@ public class PlayerManager : MonoBehaviour
         pouch.gameObject.transform.localScale += new Vector3(1f, 1f, 0f) * pouchAdjustment;
     }
 
-    public void MovePlayer(Vector3 playerMoveDirection, float movementSpeed)
+    public void MovePlayer(Vector3 playerMoveDirection)
     {
         if (_playerState != PlayerState.Stunned)
         {
-            Vector2 deltamovement = playerMoveDirection * movementSpeed * Time.deltaTime;
+            Vector2 deltamovement = playerMoveDirection * _playerMovementSpeed * Time.deltaTime;
             SetDirection(deltamovement);
             rb.MovePosition(inputManager.CheckMovement(rb.position + deltamovement));
         }
@@ -99,10 +111,14 @@ public class PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.name, this);
+        Debug.Log("PlayeMnager -> OnTrig :" + collision.name, this);
         if (collision.name.StartsWith(_mushroomName))
         {
             StunPlayer();
+        }
+        if (collision.name.StartsWith(_nutName))
+        {
+            collision.gameObject.SetActive(false);
         }
 
     }
@@ -132,6 +148,35 @@ public class PlayerManager : MonoBehaviour
         {
             playerDirection = PlayerDirection.Down;
         }
+    }
+
+    public void ResetPlayerManager()
+    {
+        _playerMovementSpeed = _startingPlayerMovementSpeed;
+        ResetPouch();
+    }
+
+    public float MovementSpeedAdjustment()
+    {
+        var gameScore = gameManager.GameScore;
+
+        Debug.Log(_playerMovementSpeed);
+        if (gameScore < 100)
+            return _playerMovementSpeed -= _playerSpeedAdjustment;
+        else if (gameScore < 200)
+            return _playerMovementSpeed -= _playerSpeedAdjustment * 0.5f;
+        else if (gameScore < 300)
+            return _playerMovementSpeed -= _playerSpeedAdjustment * 0.4f;
+        else if (gameScore < 400)
+            return _playerMovementSpeed -= _playerSpeedAdjustment * 0.3f;
+        else if (gameScore < 500)
+            return _playerMovementSpeed -= _playerSpeedAdjustment * 0.2f;
+
+        if (_playerMovementSpeed < 2f)
+            return 2f; ;
+
+        return _playerMovementSpeed -= 0.1f;
+               
     }
 }
 
