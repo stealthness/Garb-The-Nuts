@@ -15,7 +15,7 @@ public class NutManager : MonoBehaviour
 
     private void Start()
     {
-        bounds = gameManager.gameBounds;
+        bounds = new Bounds(Vector3.zero, new Vector3(10f,8f,0f));
     }
 
     public void GenerateNut()
@@ -25,7 +25,8 @@ public class NutManager : MonoBehaviour
 
     private Vector3 GetNewPos()
     {
-        Vector3 newPos = new Vector3(Random.Range(bounds.min.x + 1, bounds.max.x + 1 - 1), Random.Range(bounds.min.y + 1, bounds.max.y - 1), 0);
+        Debug.Log(bounds);
+        Vector3 newPos = new Vector3(Random.Range(bounds.min.x, bounds.max.x), Random.Range(bounds.min.y, bounds.max.y), 0);
         bool found = false;
         while (found)
         {

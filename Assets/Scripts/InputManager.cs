@@ -134,7 +134,7 @@ public class InputManager : MonoBehaviour
 
     }
 
-    private Vector2 CheckMovement(Vector2 movement)
+    public Vector2 CheckMovement(Vector2 movement)
     {
         if (gameBounds.Contains(movement))
         {

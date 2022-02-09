@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
 
     public UIManager uiManager;
     public NutManager nutManager;
+    public PlayerManager playerManager;
+    private float nextNutDelay = 30f;
 
     private void Awake()
     {
@@ -66,15 +68,15 @@ public class GameManager : MonoBehaviour
 
         score = 0;
         Time.timeScale = 0f;
+        startGameTime = standardGameTime;
+        movementSpeed = startMovementSpeed;
         if (testMode)
         {
             PlayerPrefs.SetInt("HighScore", 0);
             startGameTime = testGameTime;
         }
-
-        startGameTime = standardGameTime;
+      
         gameState = GameState.Ended;
-        movementSpeed = startMovementSpeed;
         gameTime = startGameTime;
         uiManager.UpdateScoreAndTimeText(gameTime, score);
     }
@@ -114,7 +116,7 @@ public class GameManager : MonoBehaviour
                 nuts[i].transform.position = GetNewPos();
                 score += 10;
                 movementSpeed = MovementSpeedAdjustment();
-                player.GetComponent<PlayerManager>().IncreasePouch();
+                playerManager.IncreasePouch();
             }
         }
     }
@@ -124,50 +126,43 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        if (gameState == GameState.Started)
+        if (gameState != GameState.Started)
         {
-            float x = Input.GetAxis("Horizontal");
-            float y = Input.GetAxis("Vertical");
-            playerMovement = new Vector2(x, y);
+            return;
+        }
 
-            if (rb != null)
-            {
-                Vector2 deltaMovement = playerMovement * movementSpeed * Time.deltaTime;
-                SetPlayDirection(deltaMovement);
-                rb.MovePosition(CheckMovement(rb.position + deltaMovement));
-            }
+        playerManager.MovePlayer(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")), movementSpeed);
 
-            if (nutManager.CheckForNutEaten())
-            {
-                EatingIncreasing();
-            }
+        if (nutManager.CheckForNutEaten())
+        {
+            EatingIncreasing();
+        }
 
-            if (gameTime < 30 && nuts.Count < maxNumberofPrefabs + 30 % gameTime)
+        if (gameTime < 30 && nuts.Count < maxNumberofPrefabs + (30 % gameTime))
+        {
+            if (nextNutDelay > gameTime)
             {
                 nutManager.GenerateNut();
+                nextNutDelay -= 1f;
             }
-
-            gameTime -= Time.deltaTime;
-            if (gameTime < 0)
-            {
-                EndGame();
-                gameState = GameState.Ended;
-            }
-            uiManager.UpdateScoreAndTimeText(gameTime, score);
         }
+
+        gameTime -= Time.deltaTime;
+        if (gameTime < 0)
+        {
+            EndGame();
+            gameState = GameState.Ended;
+        }
+        uiManager.UpdateScoreAndTimeText(gameTime, score);
     }
 
     private void EatingIncreasing()
     {
         score += 10;
         movementSpeed = MovementSpeedAdjustment();
-        player.GetComponent<PlayerManager>().IncreasePouch();
+        playerManager.IncreasePouch();
     }
 
-    private void SetPlayDirection(Vector2 deltaMovement)
-    {
-        player.GetComponent<PlayerManager>().SetDirection(deltaMovement);
-    }
 
 
     public float MovementSpeedAdjustment()
@@ -196,20 +191,20 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         uiManager.ActivatePanel(Panels.Menu);
         int highScore = PlayerPrefs.GetInt("HighScore");
-        string messageText = "Your Highscore remains at";
+        string messageText = "Your Highscore remains at" + highScore;
         if ( highScore < score)
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
             messageText = "Your new Highscore is " + highScore;
         }
-        uiManager.SetText(Panels.HighScore, messageText + highScore);
+        uiManager.SetText(Panels.HighScore, messageText);
     }
 
 
     public void StratGame()
     {
-        player.GetComponent<PlayerManager>().ResetPouch();
+        playerManager.ResetPouch();
         gameTime = startGameTime;
         score = 0;
         movementSpeed = startMovementSpeed;

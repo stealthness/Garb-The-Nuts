@@ -5,32 +5,28 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public InputManager inputManager;
     public Rigidbody2D rb;
-    public GameObject pouch;
-    public PlayerDirection playerDirection = PlayerDirection.Down;
-    private Vector2 prePos = Vector3.zero;
+    public PlayerDirection playerDirection;
     public GameObject player;
+    public GameObject pouch;
+    
 
     private bool hasEaten = false;
 
     //private Animation animation;
-    private float _nextWink = 1f;
+    //private float _nextWink = 1f;
+
     private PlayerState _playerState;
     private float _stunnedTime;
     private readonly string _mushroomName = "Mushroom";
 
-    public InputManager inputManager;
-
-    private void Awake()
-    {
-    }
-
 
     public void Start()
     {
+        playerDirection = PlayerDirection.Down;
         _playerState = PlayerState.Normal;
     }
-
 
     public void Update()
     {
@@ -39,22 +35,6 @@ public class PlayerManager : MonoBehaviour
             IncreasePouchSize();
             hasEaten = false;
         }
-
-        //Vector3 newPos = inputManager.GetUpdateMovement();
-
-        //if (nextWink < 0f)
-        //{
-            
-        //    //animation = gameObject.GetComponent<Animation>();
-        //    //if (animation != null)
-        //    //{
-        //    //animation.Play();
-        //    //}
-
-        //    nextWink = UnityEngine.Random.Range(2f, 10f);
-        //}
-        // nextWink -= Time.deltaTime;
-
 
     }
 
@@ -76,16 +56,18 @@ public class PlayerManager : MonoBehaviour
         pouch.gameObject.transform.localScale += new Vector3(1f, 1f, 0f) * pouchAdjustment;
     }
 
-    public void FixedUpdate()
+    public void MovePlayer(Vector3 playerMoveDirection, float movementSpeed)
     {
         if (_playerState != PlayerState.Stunned)
         {
-            return;
+            Vector2 deltamovement = playerMoveDirection * movementSpeed * Time.deltaTime;
+            SetDirection(deltamovement);
+            rb.MovePosition(inputManager.CheckMovement(rb.position + deltamovement));
         }
         if (_playerState == PlayerState.Stunned)
         {
             Debug.Log("Stunned");
-            _stunnedTime -= Time.fixedTime;
+            _stunnedTime -= Time.deltaTime;
             if (_stunnedTime < 0f)
             {
                 _stunnedTime = 2f;
@@ -99,15 +81,14 @@ public class PlayerManager : MonoBehaviour
         if (_playerState == PlayerState.Stunned) return;
         if (rb == null)
         {
-            Debug.Log("<StunPlayer", this);
+            Debug.Log("StunPlayer() --> rb is null", this);
         }
         rb.velocity = Vector3.zero;
         _playerState = PlayerState.Stunned;
     }
 
     public void IncreasePouch()
-    {
-        Debug.Log("Increase Pounch", this);        
+    {    
         hasEaten=true;
     }
 
