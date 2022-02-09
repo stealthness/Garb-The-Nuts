@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     private Vector3 centerOfBounds;
     private Vector3 cournBounds;
 
-    private Bounds gameBounds;
+    public Bounds gameBounds;
 
 
 
@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
 
     public UIManager uiManager;
+    public NutManager nutManager;
 
     private void Awake()
     {
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
         nuts = new List<GameObject>();
         for (int i = 0; i < maxNumberofPrefabs; i++)
         {
-            GenerateNut();
+            nutManager.GenerateNut();
         }
 
         centerOfBounds = Vector3.zero;
@@ -78,10 +79,7 @@ public class GameManager : MonoBehaviour
         uiManager.UpdateScoreAndTimeText(gameTime, score);
     }
 
-    private void GenerateNut()
-    {
-        nuts.Add(Instantiate(prefabNut, GetNewPos() , Quaternion.Euler(0,0 , Random.Range(0, 12) * 60f)));
-    }
+
 
     private Vector3 GetNewPos()
     {
@@ -106,7 +104,7 @@ public class GameManager : MonoBehaviour
         return newPos;
     }
 
-    private void UpDateNuts()
+    public void UpdateNuts()
     {
         for (int i = 0; i < nuts.Count; i++)
         {
@@ -139,11 +137,14 @@ public class GameManager : MonoBehaviour
                 rb.MovePosition(CheckMovement(rb.position + deltaMovement));
             }
 
-            UpDateNuts();
+            if (nutManager.CheckForNutEaten())
+            {
+                EatingIncreasing();
+            }
 
             if (gameTime < 30 && nuts.Count < maxNumberofPrefabs + 30 % gameTime)
             {
-                GenerateNut();
+                nutManager.GenerateNut();
             }
 
             gameTime -= Time.deltaTime;
@@ -153,8 +154,14 @@ public class GameManager : MonoBehaviour
                 gameState = GameState.Ended;
             }
             uiManager.UpdateScoreAndTimeText(gameTime, score);
-            // UpdateScoreAndTimeText(gameTime, score);
         }
+    }
+
+    private void EatingIncreasing()
+    {
+        score += 10;
+        movementSpeed = MovementSpeedAdjustment();
+        player.GetComponent<PlayerManager>().IncreasePouch();
     }
 
     private void SetPlayDirection(Vector2 deltaMovement)
@@ -187,20 +194,16 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {  
         Time.timeScale = 0f;
-        int highScore = PlayerPrefs.GetInt("HighScore");
         uiManager.ActivatePanel(Panels.Menu);
-        //menuPanel.SetActive(true);
+        int highScore = PlayerPrefs.GetInt("HighScore");
+        string messageText = "Your Highscore remains at";
         if ( highScore < score)
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
-            uiManager.SetText(Panels.HighScore, "Your new Highscore is " + highScore);
+            messageText = "Your new Highscore is " + highScore;
         }
-        else
-        {
-
-            uiManager.SetText(Panels.HighScore, "Your Highscore remains at " + highScore);
-        }
+        uiManager.SetText(Panels.HighScore, messageText + highScore);
     }
 
 
